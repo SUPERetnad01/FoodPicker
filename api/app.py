@@ -11,6 +11,12 @@ def hello_geek():
     return jsonify(recipes)
 
 
+@app.route('/getOneRecipe')
+def get_one_recipe():
+    recipes = dbLayer.get_first_recipe()
+    return jsonify(recipes.as_dict())
+
+
 # def fix_json_array(objects, attributes):
 #     for obj in objects:
 #         for attr in attributes:

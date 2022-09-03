@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.sql.expression import select
 from sqlalchemy.orm import sessionmaker, joinedload
 
-from models.bookstutorial import Recipe, Cuisine, RecipeSchema
+from models.bookstutorial import Recipe, Cuisine
 # from models.recipes import Book, Cuisine
 from flask import jsonify
 import json
@@ -12,22 +12,22 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 
-# def get_five_random_recipes():
-#     result = session.query(Recipe).options(joinedload(Recipe.cuisines)).all()  # .order_by(func.random()).limit(5).all()
-#     # stmt = (
-#     #     select(Recipe).options(joinedload(Recipe.cuisines, innerjoin=True))
-#     # )
-#     # result = session.execute(stmt)
-#     print(result[0].cuisines)
-#     return result
-#
+def get_five_random_recipes():
+    with Session(bind=engine) as session:
+        result = session.query(Recipe).options(joinedload(Recipe.cuisines)).order_by(func.random()).limit(5).all()
+
+    return result
+
+
 #
 def get_first_recipe():
     with Session(bind=engine) as session:
         b = session.query(Recipe).options(joinedload(Recipe.cuisines)).where(Recipe.id == 1).one()
-
-        b_schema = RecipeSchema.from_orm(b)
-        print(b_schema.json())
+        for x in b.cuisines:
+            print(x.name)
+        return b
+        # b_schema = RecipeSchema.from_orm(b)
+        # return b_schema
 
 
 def test_set():
