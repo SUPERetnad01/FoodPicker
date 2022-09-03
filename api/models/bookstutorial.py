@@ -5,6 +5,7 @@ FastAPI app called 'Bookipedia' that serves information about books and their cu
 
 from sqlalchemy import create_engine, Column, Integer, String, Table, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
+from pydantic import BaseModel
 
 # Make the engine
 engine = create_engine("postgresql://postgres:postgres@localhost:5431/foodDB", echo=True, future=True)
@@ -18,9 +19,9 @@ Base = declarative_base()
 
 # Declare Classes / Tables
 recipe_cuisine = Table('recipe_cuisine', Base.metadata,
-                     Column('recipe_id', ForeignKey('recipes.id'), primary_key=True),
-                     Column('cuisine_id', ForeignKey('cuisines.id'), primary_key=True)
-                     )
+                       Column('recipe_id', ForeignKey('recipes.id'), primary_key=True),
+                       Column('cuisine_id', ForeignKey('cuisines.id'), primary_key=True)
+                       )
 
 
 class Recipe(Base):
@@ -28,6 +29,30 @@ class Recipe(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     cuisines = relationship("Cuisine", secondary="recipe_cuisine", back_populates='recipes')
+
+
+class RecipeBase(BaseModel):
+    id: int
+    title: str
+
+    class Config:
+        orm_mode = True
+
+
+class CuisineBase(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+class RecipeSchema(RecipeBase):
+    cuisines: list[CuisineBase]
+
+
+class CuisineSchema(CuisineBase):
+    cuisines: list[RecipeBase]
 
 
 class Cuisine(Base):

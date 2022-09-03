@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.sql.expression import select
 from sqlalchemy.orm import sessionmaker, joinedload
 
-from models.bookstutorial import Recipe, Cuisine
+from models.bookstutorial import Recipe, Cuisine, RecipeSchema
 # from models.recipes import Book, Cuisine
 from flask import jsonify
 import json
@@ -22,22 +22,13 @@ session = Session()
 #     return result
 #
 #
-# def get_first_recipe():
-#     r = session.query(Recipe).where(Recipe.id == 1).one()
-#     for b in r.cuisines:
-#         print(b.cuisine)
-#     return r
+def get_first_recipe():
+    with Session(bind=engine) as session:
+        b = session.query(Recipe).options(joinedload(Recipe.cuisines)).where(Recipe.id == 1).one()
 
+        b_schema = RecipeSchema.from_orm(b)
+        print(b_schema.json())
 
-# def add_value_to_db():
-#     r1 = Recipe(title="fried rice")
-#     r2 = Recipe(title="baked potatos")
-#     c = Cuisine(name="italian")
-#     c2 = Cuisine(name="french")
-#     r1.cuisines = [c, c2]
-#     r2.cuisines = [c, c2]
-#     session.add_all([r1, r2, c, c2])
-#     session.commit()
 
 def test_set():
     from sqlalchemy.orm import Session
@@ -60,9 +51,4 @@ if __name__ == "__main__":
     # add_value_to_db()
     # values = get_first_recipe()
     # test_set()
-    with Session(bind=engine) as session:
-        b1 = session.query(Recipe).where(Recipe.id == 1).one()
-        print(b1.title)
-
-        for a in b1.cuisines:
-            print(a.name)
+    get_first_recipe()
