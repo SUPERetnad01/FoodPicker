@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.sql.expression import select
 from sqlalchemy.orm import sessionmaker, joinedload
 
-from models.bookstutorial import Recipe, Cuisine
+from models.Recipes import Recipe, Cuisine, DishType, Occasion, Diet
 # from models.recipes import Book, Cuisine
 from flask import jsonify
 import json
@@ -40,15 +40,30 @@ def test_set():
         author2 = Cuisine(name="Chip Egan")
         author3 = Cuisine(name="Alyssa Wyatt")
 
+        dishType = DishType(name="main_meal")
+        dishType1 = DishType(name="second_meal")
+
+        oc1 = Occasion(name="cristmas")
+        oc2 = Occasion(name="birthday")
+
+        d = Diet(name="vegiterian")
+        d1 = Diet(name="nocarbs")
+
         book1.cuisines = [author1, author2]
         book2.cuisines = [author1, author3]
+        book1.dishTypes = [dishType, dishType1]
+        book2.dishTypes = [dishType, dishType1]
+        book1.occasions = [oc1, oc2]
+        book2.occasions = [oc1, oc2]
+        book1.diets = [d, d1]
+        book2.diets = [d, d1]
 
-        session.add_all([book1, book2, author1, author2, author3])
+        session.add_all([book1, book2, author1, author2, author3, dishType, dishType1])
         session.commit()
 
 
 if __name__ == "__main__":
     # add_value_to_db()
     # values = get_first_recipe()
-    # test_set()
+    test_set()
     get_first_recipe()
