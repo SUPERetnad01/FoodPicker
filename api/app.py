@@ -1,32 +1,25 @@
 from flask import Flask, jsonify
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 import dbLayer
 
 app = Flask(__name__)
+
+engine = create_engine("postgresql://postgres:postgres@localhost:5431/foodDB", echo=True, future=True)
+Session = sessionmaker(bind=engine)
 
 
 @app.route('/get5recipes')
 def hello_geek():
     recipes = dbLayer.get_five_random_recipes()
-    # fix_json_array(recipes, ["cuisines", "diets", "dishTypes", "occasions"])
     return jsonify(recipes)
 
 
-@app.route('/getOneRecipe')
+@app.route('/getFirstRecipe')
 def get_one_recipe():
     recipes = dbLayer.get_first_recipe()
     return jsonify(recipes.as_dict())
-
-
-# def fix_json_array(objects, attributes):
-#     for obj in objects:
-#         for attr in attributes:
-#             print(attr)
-#             arr = getattr(obj, attr)
-#             if isinstance(arr, list) and len(arr) > 1 and arr[0] == '{':
-#                 arr = arr[1:-1]
-#                 arr = ''.join(arr).split(",")
-#                 print(arr)
-#                 setattr(obj, attr, arr)
 
 
 if __name__ == "__main__":

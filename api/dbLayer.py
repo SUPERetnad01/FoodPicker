@@ -9,25 +9,17 @@ import json
 
 engine = create_engine("postgresql://postgres:postgres@localhost:5431/foodDB", echo=True, future=True)
 Session = sessionmaker(bind=engine)
-session = Session()
+session = Session(bind=engine)
 
 
 def get_five_random_recipes():
-    with Session(bind=engine) as session:
-        result = session.query(Recipe).options(joinedload(Recipe.cuisines)).order_by(func.random()).limit(5).all()
-
+    result = session.query(Recipe).limit(5).all()
     return result
 
 
 #
 def get_first_recipe():
-    with Session(bind=engine) as session:
-        b = session.query(Recipe).options(joinedload(Recipe.cuisines)).where(Recipe.id == 1).one()
-        for x in b.cuisines:
-            print(x.name)
-        return b
-        # b_schema = RecipeSchema.from_orm(b)
-        # return b_schema
+    return session.query(Recipe).options(joinedload(Recipe.cuisines)).first()
 
 
 def test_set():

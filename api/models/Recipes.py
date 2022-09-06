@@ -104,8 +104,8 @@ class Recipe(Base):
     imageType: str = Column(String)
     summary: str = Column(String)
     spoonacularSourceUrl: str = Column(String)
-    diets: Diet = relationship("Diet", secondary="recipe_diets", back_populates='recipes')
     occasions: Occasion = relationship("Occasion", secondary="recipe_occasions", back_populates='recipes')
+    diets: Diet = relationship("Diet", secondary="recipe_diets", back_populates='recipes')
     dishTypes: DishType = relationship("DishType", secondary="recipe_dishType", back_populates='recipes')
     cuisines: Cuisine = relationship("Cuisine", secondary="recipe_cuisine", back_populates='recipes')
 
